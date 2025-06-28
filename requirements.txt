@@ -1,5 +1,6 @@
-    Flask
-    flask-cors
-    flask-sqlalchemy
-    gunicorn
-    psycopg2-binary
+Flask
+flask-cors
+flask_sqlalchemy
+flask_login
+gunicorn
+psycopg2-binary
