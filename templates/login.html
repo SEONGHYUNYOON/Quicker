@@ -1,14 +1,16 @@
-<form method="POST">
-    {% if error %}
-        <div class="alert alert-danger" role="alert">{{ error }}</div>
-    {% endif %}
-    <div class="mb-3">
-        <label for="password" class="form-label">비밀번호</label>
-        <input type="password" class="form-control" id="password" name="password" required>
-    </div>
-    <div class="d-grid">
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-sign-in-alt"></i> 로그인
-        </button>
-    </div>
-</form>
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        password = request.form['password']
+        admin = Admin.query.first()
+        if admin is None:
+            default_admin = Admin(username='admin', password_hash=generate_password_hash('4568'))
+            db.session.add(default_admin)
+            db.session.commit()
+            admin = default_admin
+        if check_password_hash(admin.password_hash, password):
+            login_user(admin)
+            return redirect(url_for('admin_dashboard'))
+        else:
+            return render_template('login.html', error='Invalid password')
+    return render_template('login.html')
