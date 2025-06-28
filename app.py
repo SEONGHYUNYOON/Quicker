@@ -6,8 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
 import os
 
-app = Flask(__name__)  # ✅ 오타 수정 (__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # ✅ CORS 수정
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-this-in-production')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///keeper.db')
@@ -23,7 +23,6 @@ login_manager.login_view = 'admin_login'
 
 class Admin(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
 
 class Member(db.Model):
@@ -71,8 +70,7 @@ def admin_login():
         password = request.form.get('password')
         admin = Admin.query.first()
         if admin is None:
-            # Create default admin with password 4568 if not exist
-            default_admin = Admin(username='admin', password_hash=generate_password_hash('4568'))
+            default_admin = Admin(password_hash=generate_password_hash('4568'))
             db.session.add(default_admin)
             db.session.commit()
             admin = default_admin
@@ -203,7 +201,7 @@ def verify_cid():
         phone = data.get('phone', None)
         if cid == "testcid":
             return jsonify({
-                "status": "success", 
+                "status": "success",
                 "token": "dummy_token"
             })
         else:
